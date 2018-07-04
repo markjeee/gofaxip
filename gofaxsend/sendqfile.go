@@ -68,7 +68,7 @@ func SendQfile(qfilename string) (int, error) {
 	faxjob.Number = fmt.Sprint(gofaxlib.Config.Gofaxsend.CallPrefix, qf.GetString("external"))
 	faxjob.Cidnum = gofaxlib.Config.Gofaxsend.FaxNumber //qf.GetString("faxnumber")
 	faxjob.Ident = gofaxlib.Config.Freeswitch.Ident
-	faxjob.Header = gofaxlib.Config.Freeswitch.Header
+	faxjob.Header = qf.GetString("tagline")
 	faxjob.Gateways = gofaxlib.Config.Freeswitch.Gateway
 
 	if ecmMode, err := qf.GetInt("desiredec"); err == nil {
