@@ -71,6 +71,8 @@ func SendQfile(qfilename string) (int, error) {
 	faxjob.Header = gofaxlib.Config.Freeswitch.Header
 	faxjob.Gateways = gofaxlib.Config.Freeswitch.Gateway
 
+	faxjob.TotalPages, err = qf.GetInt("totpages")
+
 	if ecmMode, err := qf.GetInt("desiredec"); err == nil {
 		faxjob.UseECM = ecmMode != 0
 	}
