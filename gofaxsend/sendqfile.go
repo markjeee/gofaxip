@@ -70,6 +70,7 @@ func SendQfile(qfilename string) (int, error) {
 	faxjob.Ident = gofaxlib.Config.Freeswitch.Ident
 	faxjob.Header = gofaxlib.Config.Freeswitch.Header
 	faxjob.Gateways = gofaxlib.Config.Freeswitch.Gateway
+	faxjob.Timezone = qf.GetString("timezone")
 
 	if ecmMode, err := qf.GetInt("desiredec"); err == nil {
 		faxjob.UseECM = ecmMode != 0
