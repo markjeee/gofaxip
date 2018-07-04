@@ -125,6 +125,10 @@ func SendQfile(qfilename string) (int, error) {
 			faxjob.Gateways = strings.Split(gatewayString, ",")
 		}
 
+		if timezone := dc.GetFirst("timezone"); timezone != "" {
+ 			faxjob.Timezone = timezone
+ 		}
+
 	}
 
 	switch gofaxlib.Config.Gofaxsend.CidName {
