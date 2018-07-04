@@ -46,6 +46,9 @@ type FaxJob struct {
 
 	// Gateways to try for this job
 	Gateways []string
+
+	// TotalPages from Hylafax Job
+	TotalPages int
 }
 
 // NewFaxJob initializes a new Fax Job with a random UUID
