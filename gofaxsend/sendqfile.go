@@ -24,6 +24,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"math"
+	"time"
 
 	"github.com/gonicus/gofaxip/gofaxlib"
 	"github.com/gonicus/gofaxip/gofaxlib/logger"
@@ -66,9 +68,9 @@ func SendQfile(qfilename string) (int, error) {
 	}
 
 	faxjob.Number = fmt.Sprint(gofaxlib.Config.Gofaxsend.CallPrefix, qf.GetString("external"))
-	faxjob.Cidnum = gofaxlib.Config.Gofaxsend.FaxNumber //qf.GetString("faxnumber")
+	faxjob.Cidnum = qf.GetString("faxnumber")
 	faxjob.Ident = gofaxlib.Config.Freeswitch.Ident
-	faxjob.Header = gofaxlib.Config.Freeswitch.Header
+	faxjob.Header = qf.GetString("tagline")
 	faxjob.Gateways = gofaxlib.Config.Freeswitch.Gateway
 
 	faxjob.TotalPages, err = qf.GetInt("totpages")
@@ -232,6 +234,10 @@ func SendQfile(qfilename string) (int, error) {
 			if result.Hangupcause != "" {
 				// Fax Finished
 				done = true
+
+				duration := result.EndTs.Sub(result.StartTs)
+ 				qf.Set("duration", formatDuration(duration))
+
 				qf.Set("status", result.ResultText)
 				if result.Success {
 					qf.Set("returned", strconv.Itoa(sendDone))
@@ -282,4 +288,9 @@ func SendQfile(qfilename string) (int, error) {
 	}
 
 	return returned, faxerr
+}
+
+func formatDuration(d time.Duration) string {
+	s := uint(math.Ceil(d.Seconds()))
+	return fmt.Sprintf("%d", s)
 }
