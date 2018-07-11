@@ -46,6 +46,9 @@ type FaxJob struct {
 
 	// Gateways to try for this job
 	Gateways []string
+
+	// Timezone from Hylafax Job
+	Timezone string
 }
 
 // NewFaxJob initializes a new Fax Job with a random UUID
