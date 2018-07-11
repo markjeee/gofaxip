@@ -131,7 +131,7 @@ func (t *transmission) start() {
 		"fax_enable_t38":               strconv.FormatBool(enableT38),
 		"fax_enable_t38_request":       strconv.FormatBool(requestT38),
 		"fax_verbose":                  strconv.FormatBool(gofaxlib.Config.Freeswitch.Verbose),
-		"execute_on_answer":			fmt.Sprintf("sched_hangup +%d allotted_timeout", 400 * t.faxjob.TotalPages),
+		"execute_on_answer":            fmt.Sprintf("sched_hangup +%d allotted_timeout", calculateAllottedTimeout(t.faxjob.TotalPages)),
 	}
 
 	var dsVariables bytes.Buffer
@@ -236,4 +236,12 @@ func (t *transmission) start() {
 		}
 	}
 
+}
+
+func calculateAllottedTimeout(totalPages int) (int) {
+	allottedTimeout := 400
+	if totalPages >= 1 {
+		allottedTimeout = allottedTimeout * totalPages
+	}
+	return allottedTimeout
 }
