@@ -131,6 +131,7 @@ func (t *transmission) start() {
 		"fax_enable_t38":               strconv.FormatBool(enableT38),
 		"fax_enable_t38_request":       strconv.FormatBool(requestT38),
 		"fax_verbose":                  strconv.FormatBool(gofaxlib.Config.Freeswitch.Verbose),
+		"fax_timezone":                 t.faxjob.Timezone,
 		"execute_on_answer":            fmt.Sprintf("sched_hangup +%d allotted_timeout", calculateAllottedTimeout(t.faxjob.TotalPages)),
 	}
 

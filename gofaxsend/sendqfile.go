@@ -73,7 +73,7 @@ func SendQfile(qfilename string) (int, error) {
 	faxjob.Header = qf.GetString("tagline")
 	faxjob.Gateways = gofaxlib.Config.Freeswitch.Gateway
 	faxjob.TotalPages, err = qf.GetInt("totpages")
-
+	faxjob.Timezone = qf.GetString("timezone")
 
 	if ecmMode, err := qf.GetInt("desiredec"); err == nil {
 		faxjob.UseECM = ecmMode != 0
@@ -127,6 +127,10 @@ func SendQfile(qfilename string) (int, error) {
 		if gatewayString := dc.GetString("Gateway"); gatewayString != "" {
 			faxjob.Gateways = strings.Split(gatewayString, ",")
 		}
+
+		if timezone := dc.GetFirst("timezone"); timezone != "" {
+ 			faxjob.Timezone = timezone
+ 		}
 
 	}
 
