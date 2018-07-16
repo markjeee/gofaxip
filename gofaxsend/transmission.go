@@ -29,6 +29,8 @@ import (
 	"github.com/gonicus/gofaxip/gofaxlib"
 
 	"github.com/fiorix/go-eventsocket/eventsocket"
+
+	"github.com/timeout"
 )
 
 type transmission struct {
@@ -132,7 +134,7 @@ func (t *transmission) start() {
 		"fax_enable_t38_request":       strconv.FormatBool(requestT38),
 		"fax_verbose":                  strconv.FormatBool(gofaxlib.Config.Freeswitch.Verbose),
 		"fax_timezone":                 t.faxjob.Timezone,
-		"execute_on_answer":            fmt.Sprintf("sched_hangup +%d allotted_timeout", calculateAllottedTimeout(t.faxjob.TotalPages)),
+		"execute_on_answer":            fmt.Sprintf("sched_hangup +%d allotted_timeout", timeout.CalculateAllottedTimeout(t.faxjob.TotalPages)),
 	}
 
 	var dsVariables bytes.Buffer
@@ -237,12 +239,4 @@ func (t *transmission) start() {
 		}
 	}
 
-}
-
-func calculateAllottedTimeout(totalPages int) (int) {
-	allottedTimeout := 400
-	if totalPages >= 1 {
-		allottedTimeout = allottedTimeout * totalPages
-	}
-	return allottedTimeout
 }
