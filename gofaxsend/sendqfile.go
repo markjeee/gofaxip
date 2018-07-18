@@ -24,6 +24,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"math"
+	"time"
 
 	"github.com/gonicus/gofaxip/gofaxlib"
 	"github.com/gonicus/gofaxip/gofaxlib/logger"
@@ -66,10 +68,12 @@ func SendQfile(qfilename string) (int, error) {
 	}
 
 	faxjob.Number = fmt.Sprint(gofaxlib.Config.Gofaxsend.CallPrefix, qf.GetString("external"))
-	faxjob.Cidnum = gofaxlib.Config.Gofaxsend.FaxNumber //qf.GetString("faxnumber")
+	faxjob.Cidnum = qf.GetString("faxnumber")
+	faxjob.Header = qf.GetString("tagline")
 	faxjob.Ident = qf.GetString("tsi")
-	faxjob.Header = gofaxlib.Config.Freeswitch.Header
 	faxjob.Gateways = gofaxlib.Config.Freeswitch.Gateway
+	faxjob.TotalPages, err = qf.GetInt("totpages")
+	faxjob.Timezone = qf.GetString("timezone")
 
 	if ecmMode, err := qf.GetInt("desiredec"); err == nil {
 		faxjob.UseECM = ecmMode != 0
@@ -123,6 +127,10 @@ func SendQfile(qfilename string) (int, error) {
 		if gatewayString := dc.GetString("Gateway"); gatewayString != "" {
 			faxjob.Gateways = strings.Split(gatewayString, ",")
 		}
+
+		if timezone := dc.GetFirst("timezone"); timezone != "" {
+ 			faxjob.Timezone = timezone
+ 		}
 
 	}
 
@@ -227,6 +235,10 @@ func SendQfile(qfilename string) (int, error) {
 			if result.Hangupcause != "" {
 				// Fax Finished
 				done = true
+
+				duration := result.EndTs.Sub(result.StartTs)
+ 				qf.Set("duration", formatDuration(duration))
+
 				qf.Set("status", result.ResultText)
 				if result.Success {
 					qf.Set("returned", strconv.Itoa(sendDone))
@@ -277,4 +289,9 @@ func SendQfile(qfilename string) (int, error) {
 	}
 
 	return returned, faxerr
+}
+
+func formatDuration(d time.Duration) string {
+	s := uint(math.Ceil(d.Seconds()))
+	return fmt.Sprintf("%d", s)
 }
