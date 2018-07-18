@@ -72,6 +72,7 @@ func SendQfile(qfilename string) (int, error) {
 	faxjob.Header = qf.GetString("tagline")
 	faxjob.Ident = qf.GetString("tsi")
 	faxjob.Gateways = gofaxlib.Config.Freeswitch.Gateway
+	faxjob.TotalPages, err = qf.GetInt("totpages")
 	faxjob.Timezone = qf.GetString("timezone")
 
 	if ecmMode, err := qf.GetInt("desiredec"); err == nil {
