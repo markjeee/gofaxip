@@ -28,6 +28,5 @@ Depends: ${shlibs:Depends},
          freeswitch-mod-db,
          freeswitch-mod-syslog,
          freeswitch-mod-logfile,
-Conflicts: freeswitch-sysvinit,
-           freeswitch-systemd
+Conflicts: freeswitch-sysvinit
 Description: Fax Over IP backend for HylaFAX using FreeSWITCH
