@@ -17,7 +17,6 @@ Built-Using: ${misc:Built-Using}
 Depends: ${shlibs:Depends},
          ${misc:Depends},
          libtiff-tools,
-         hylafax-server,
          freeswitch,
          freeswitch-mod-commands,
          freeswitch-mod-dptools,
@@ -28,6 +27,5 @@ Depends: ${shlibs:Depends},
          freeswitch-mod-db,
          freeswitch-mod-syslog,
          freeswitch-mod-logfile,
-Conflicts: freeswitch-sysvinit,
-           freeswitch-systemd
+Conflicts: freeswitch-sysvinit
 Description: Fax Over IP backend for HylaFAX using FreeSWITCH
