@@ -66,6 +66,7 @@ type config struct {
 		CidName              string
 		FailedResponse       []string
 		FailedResponseMap    map[string]bool
+		OriginateVar        []string
 	}
 }
 

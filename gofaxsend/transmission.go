@@ -135,6 +135,16 @@ func (t *transmission) start() {
 		"execute_on_answer":            fmt.Sprintf("sched_hangup +%d allotted_timeout", calculateAllottedTimeout(t.faxjob.TotalPages)),
 	}
 
+	originateVars := gofaxlib.Config.Gofaxsend.OriginateVar
+	if len(originateVars) > 0 {
+		for _, ov := range originateVars {
+			v := strings.SplitN(ov, "=", 2)
+			if len(v) > 1 {
+				dsVariablesMap[v[0]] = v[1]
+			}
+		}
+	}
+
 	var dsVariables bytes.Buffer
 	var dsGateways bytes.Buffer
 
@@ -154,7 +164,7 @@ func (t *transmission) start() {
 	}
 
 	dialstring := fmt.Sprintf("{%v}%v", dsVariables.String(), dsGateways.String())
-	//t.sessionlog.Logf("Dialstring: %v", dialstring)
+	t.sessionlog.Logf("Dialstring: %v", dialstring)
 
 	// Originate call
 	t.sessionlog.Log("Originating channel to", t.faxjob.Number, "using gateway", strings.Join(t.faxjob.Gateways, ","))
