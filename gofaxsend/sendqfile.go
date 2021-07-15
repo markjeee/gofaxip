@@ -184,8 +184,16 @@ func SendQfile(qfilename string) (int, error) {
 	// Consecutive failed attempts to place a call
 	ndials, _ := qf.GetInt("ndials")
 
+	// Total max dials
+	maxdials, _ := qf.GetInt("maxdials")
+
 	// Total answered calls
 	tottries, _ := qf.GetInt("tottries")
+
+	// Total max tries
+	maxtries, _ := qf.GetInt("maxtries")
+
+  sessionlog.Logf("Call stats for Job %d: %d %d %d %d %d", jobid, totdials, ndials, maxdials, tottries, maxtries)
 
 	//Auto fallback to slow baudrate after to many tries
 	v17retry, err := strconv.Atoi(gofaxlib.Config.Gofaxsend.DisableV17AfterRetry)
@@ -260,12 +268,21 @@ func SendQfile(qfilename string) (int, error) {
 
 		case faxerr = <-t.Errors():
 			done = true
+
 			ndials++
 			qf.Set("ndials", strconv.Itoa(ndials))
 			qf.Set("status", faxerr.Error())
+
 			if faxerr.Retry() {
-				returned = sendRetry
+				if (tottries < maxtries) && (totdials < maxdials) {
+					qf.Set("returned", strconv.Itoa(sendRetry))
+					returned = sendRetry
+			  } else  {
+					qf.Set("returned", strconv.Itoa(sendFailed))
+					returned = sendFailed
+				}
 			} else {
+				qf.Set("returned", strconv.Itoa(sendFailed))
 				returned = sendFailed
 			}
 		}
